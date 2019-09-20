@@ -3,10 +3,11 @@ package client
 import (
 	"errors"
 	"fmt"
-	"github.com/milkbobo/gopay/common"
-	"github.com/milkbobo/gopay/util"
 	"strings"
 	"time"
+
+	"github.com/milkbobo/gopay/common"
+	"github.com/milkbobo/gopay/util"
 )
 
 var defaultWechatAppClient *WechatAppClient
@@ -20,6 +21,10 @@ func DefaultWechatAppClient() *WechatAppClient {
 	return defaultWechatAppClient
 }
 
+const (
+	DefaultWechatUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+)
+
 // WechatAppClient 微信app支付
 type WechatAppClient struct {
 	AppID       string       // 公众账号ID
@@ -28,6 +33,7 @@ type WechatAppClient struct {
 	PrivateKey  []byte       // 私钥文件内容
 	PublicKey   []byte       // 公钥文件内容
 	httpsClient *HTTPSClient // 双向证书链接
+	WechatURL   string
 }
 
 // Pay 支付
@@ -51,7 +57,12 @@ func (this *WechatAppClient) Pay(charge *common.Charge) (map[string]string, erro
 
 	m["sign"] = sign
 
-	xmlRe, err := PostWechat("https://api.mch.weixin.qq.com/pay/unifiedorder", m, nil)
+	wechatURL := this.WechatURL
+	if wechatURL == "" {
+		wechatURL = DefaultWechatUrl
+	}
+
+	xmlRe, err := PostWechat(wechatURL, m, nil)
 	if err != nil {
 		return map[string]string{}, err
 	}
