@@ -7,10 +7,11 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/milkbobo/gopay/common"
-	"github.com/milkbobo/gopay/util"
 	"sort"
 	"strings"
+
+	"github.com/milkbobo/gopay/common"
+	"github.com/milkbobo/gopay/util"
 	"github.com/shopspring/decimal"
 )
 
@@ -102,7 +103,6 @@ func WechatGenSign(key string, m map[string]string) (string, error) {
 	sort.Strings(signData)
 	signStr := strings.Join(signData, "&")
 	signStr = signStr + "&key=" + key
-
 	c := md5.New()
 	_, err := c.Write([]byte(signStr))
 	if err != nil {
